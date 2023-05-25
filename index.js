@@ -2,12 +2,8 @@ const vertexShaderTxt =
   `precision mediump float;
 
 attribute vec2 vertPosition;
-attribute vec3 vertColor;
-
-varying vec3 fragColor;
 
 void main() {
-    fragColor = vertColor;
     gl_Position = vec4(vertPosition, 0.0, 1.0);
 }
 `;
@@ -15,16 +11,17 @@ void main() {
 const fragmentShaderTxt =
   `precision mediump float;
 
-varying vec3 fragColor;
+uniform vec3 color;
 
 void main() {
-    gl_FragColor = vec4(fragColor, 1.);
+    gl_FragColor = vec4(color, 1.);
 }
 `;
 
 const mat4 = glMatrix.mat4;
 
 const Triangle = function() {
+  const btn = document.querySelector('button');
   const canvas = document.getElementById("canvas");
   const gl = canvas.getContext("webgl");
 
@@ -59,29 +56,38 @@ const Triangle = function() {
   gl.detachShader(program, fragmentShader);
 
   gl.validateProgram(program);
+  gl.useProgram(program);
+  const colorLocation = gl.getUniformLocation(program, "color");
+  gl.uniform3f(colorLocation, Math.random(), Math.random(), Math.random());
 
   let triangleVert = [
-    0.0, 0.0, 1.0, 0.0, 0.0,
-    -0.5, 0.0, 1.0, 0.0, 0.0,
-    -0.25, 0.5, 1.0, 0.0, 0.0,
-    0.25, 0.5, 1.0, 0.0, 0.0,
-    0.5, 0.0, 1.0, 0.0, 0.0,
-    0.25, -0.5, 1.0, 0.0, 0.0,
-    -0.25, -0.5, 1.0, 0.0, 0.0,
-    -0.5, 0.0, 1.0, 0.0, 0.0,
+    0.0, 0.0,
+    -0.5, 0.0,
+    -0.25, 0.5,
+    0.25, 0.5,
+    0.5, 0.0,
+    0.25, -0.5,
+    -0.25, -0.5,
+    -0.5, 0.0,
   ];
+
   const triangleVertexBufferObject = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexBufferObject);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(triangleVert), gl.STATIC_DRAW);
 
   const posAttrLocation = gl.getAttribLocation(program, 'vertPosition');
-  const colorAttrLocation = gl.getAttribLocation(program, 'vertColor');
-  gl.vertexAttribPointer(posAttrLocation, 2, gl.FLOAT, gl.FALSE, 5 * Float32Array.BYTES_PER_ELEMENT, 0);
-  gl.vertexAttribPointer(colorAttrLocation, 3, gl.FLOAT, gl.FALSE, 5 * Float32Array.BYTES_PER_ELEMENT, 2 * Float32Array.BYTES_PER_ELEMENT);
+  // const colorAttrLocation = gl.getAttribLocation(program, 'vertColor');
+  gl.vertexAttribPointer(posAttrLocation, 2, gl.FLOAT, gl.FALSE, 2 * Float32Array.BYTES_PER_ELEMENT, 0);
+  // gl.vertexAttribPointer(colorAttrLocation, 3, gl.FLOAT, gl.FALSE, 5 * Float32Array.BYTES_PER_ELEMENT, 2 * Float32Array.BYTES_PER_ELEMENT);
 
   gl.enableVertexAttribArray(posAttrLocation);
-  gl.enableVertexAttribArray(colorAttrLocation);
+  // gl.enableVertexAttribArray(colorAttrLocation);
 
-  gl.useProgram(program);
   gl.drawArrays(gl.TRIANGLE_FAN, 0, 8);
+
+  btn.addEventListener("click", () => {
+    gl.uniform3f(colorLocation, Math.random(), Math.random(), Math.random());
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.drawArrays(gl.TRIANGLE_FAN, 0, 8);
+  });
 } 
