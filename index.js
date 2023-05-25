@@ -61,13 +61,14 @@ const Triangle = function() {
   gl.validateProgram(program);
 
   let triangleVert = [
-    0.5, 0.5, 1.0, 0.0, 0.0,
-    -0.5, -0.5, 0.0, 1.0, 0.0,
-    0.5, -0.5, 0.0, 0.0, 1.0,
-
-    0.5, 0.5, 1.0, 0.0, 0.0,
-    -0.5, -0.5, 0.0, 1.0, 0.0,
-    -0.5, 0.5, 0.0, 0.0, 1.0
+    0.0, 0.0, 1.0, 0.0, 0.0,
+    -0.5, 0.0, 1.0, 0.0, 0.0,
+    -0.25, 0.5, 1.0, 0.0, 0.0,
+    0.25, 0.5, 1.0, 0.0, 0.0,
+    0.5, 0.0, 1.0, 0.0, 0.0,
+    0.25, -0.5, 1.0, 0.0, 0.0,
+    -0.25, -0.5, 1.0, 0.0, 0.0,
+    -0.5, 0.0, 1.0, 0.0, 0.0,
   ];
   const triangleVertexBufferObject = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexBufferObject);
@@ -82,5 +83,5 @@ const Triangle = function() {
   gl.enableVertexAttribArray(colorAttrLocation);
 
   gl.useProgram(program);
-  gl.drawArrays(gl.TRIANGLES, 0, 6);
+  gl.drawArrays(gl.TRIANGLE_FAN, 0, 8);
 } 
